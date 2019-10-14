@@ -1,0 +1,14 @@
+{
+  "name": "language-purebasic",
+  "version": "0.0.0",
+  "description": "PureBasic language support in Atom",
+  "engines": {
+    "atom": "*"
+  },
+  "dependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/codespunk/"
+  },
+  "license": "MIT"
+}
