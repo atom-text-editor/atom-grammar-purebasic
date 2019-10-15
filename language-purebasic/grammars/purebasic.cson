@@ -4,7 +4,7 @@ fileTypes: ['pb', 'pbi']
 patterns: [
   { include: '#variable' }
   { include: '#comment' }
-  { include: '#number' }
+  { include: '#numeric' }
   { include: '#constant' }
   { include: '#string' }
   { include: '#keyword' }
@@ -12,35 +12,29 @@ patterns: [
   { include: '#assembly' }
   { include: '#operator' }
   {
-    'begin': '''([A-Za-z_][A-Za-z0-9_]+)\\s*(\\()
-    '''
-    'beginCaptures':
-      '1':
-        'name': 'entity.name.function.purebasic'
-      '2':
-        'name': 'punctuation.definition.seperator.purebasic'
-    'end': '\\)'
-    'endCaptures':
-      '0':
-        'name': 'punctuation.definition.seperator.purebasic'
-    'patterns': [
-      {
-        'include': '$base'
-      }
+    begin: '([A-Za-z_][A-Za-z0-9_]+)\\s*(\\()'
+    beginCaptures:
+      1:
+        name: 'entity.name.function.purebasic'
+      2:
+        name: 'punctuation.definition.seperator.purebasic'
+    end: '\\)'
+    endCaptures:
+      0:
+        name: 'punctuation.definition.seperator.purebasic'
+    patterns: [
+      { include: '$base' }
     ]
-  },
+  }
   {
-    'match': '''([A-Za-z_][A-Za-z0-9_]+)\\s*(::)
-    '''
-    'captures':
-      '1':
+    match: '([A-Za-z_][A-Za-z0-9_]+)\\s*(::)'
+    captures:
+      1:
         'name': 'entity.name.module.purebasic'
-      '2':
-        'name': 'keyword.operator.purebasic'
-    'patterns': [
-      {
-        'include': '$base'
-      }
+      2:
+        'name': 'keyword.operator.module-scope.purebasic'
+    patterns: [
+      { include: '$base' }
     ]
   }
 ]
@@ -48,67 +42,85 @@ patterns: [
 repository:
   assembly: {
     match: '^\\s*(![^;]*)'
-    name: 'assembly.purebasic'
+    name: 'storage.type.assembly.purebasic'
   }
-  
+
   label: {
     match: '[a-zA-Z0-9_]+\s*:(?!:)'
     name: 'entity.label.purebasic'
   }
-  
+
   variable: {
     match: '\\*[a-zA-Z0-9_]+'
     name: 'variable.pointer.purebasic'
   }
-  
+
   comment: {
     match: ';+.*$'
     name: 'comment.line.purebasic'
   }
-  
-  number: {
-    match: '''
-    (?x)
-      (\\b
-        | \\$ # Hexadecimal
-        | %   # Binary
-      ) (
-      ([0-9]+)           # Decimal
-        | (\\.) ([0-9]+) # Float
-      \\b)
-     '''
-    name: 'constant.numeric'
-  },
-  
+
+  numeric:
+    patterns: [
+      {
+         match: '\\b[0-9]+'
+         name: 'constant.numeric.decimal.purebasic'
+      }
+      {
+         match: '\\b[0-9]+\\.[0-9]+\\b'
+         name: 'constant.numeric.float.purebasic'
+      }
+      {
+         match: '\\$[abcdefABCDEF0-9]+\\b'
+         name: 'constant.numeric.hexadecimal.purebasic'
+      }
+      {
+         match: '%[0-9]+\\b'
+         name: 'constant.numeric.binary.purebasic'
+      }
+    ]
+    name: 'constant.numeric.purebasic'
+
   constant: {
     match: '(#([a-zA-Z0-9_]+\\$?)?)'
     name: 'constant.purebasic'
-  },
-  
-  operator: {
+  }
+
+  operator:
     patterns: [
       {
-        match: '(\\+|-|\\/|%|=|<>|>|<|>=|<=|~|!|\\|)'
+        match: '(\\+|-|\\/|%|=|<>|>|<|>=|<=)'
         name: 'keyword.operator.arithmetic.purebasic'
-      },
+      }
       {
-        match: '[a-zA-Z0-9](\\*)'
+        match: '(~|!|&|\\|)'
+        name: 'keyword.operator.bitwise.purebasic'
+      }
+      {
+        match: '(?i)[a-zA-Z0-9](?<!return)\\s?(\\*)'
         captures:
           1:
             name: 'keyword.operator.arithmetic.purebasic'
-      },
+      }
       {
         match: '(:)'
-        name: 'keyword.operator.purebasic'
-      },
+        name: 'keyword.operator.concatenation.purebasic'
+      }
+      {
+        match: '(,)'
+        name: 'punctuation.definition.seperator.comma.purebasic'
+      }
+      {
+        match: '(\\[|\\])'
+        name: 'punctuation.definition.seperator.brackets.purebasic'
+      }
       {
         match: '(,|\\\\)'
-        name: 'punctuation.definition.seperator.purebasic'
+        name: 'punctuation.definition.seperator.brackets.purebasic'
       }
     ]
-  }
-  
-  keyword: {
+
+  keyword:
     patterns: [
       {
         match: '(?ix)
@@ -116,7 +128,7 @@ repository:
             define
         )\\b'
         name: 'keyword.define.purebasic'
-      },
+      }
       {
         match: '(?ix)
         \\b(
@@ -124,7 +136,7 @@ repository:
           | prototypec
         )\\b'
         name: 'keyword.prototype.purebasic'
-      },
+      }
       {
         match: '(?ix)
         \\b(
@@ -134,7 +146,7 @@ repository:
           | declaredll
         )\\b'
         name: 'keyword.declare.purebasic'
-      },
+      }
       {
         match: '(?ix)
         \\b(
@@ -144,7 +156,7 @@ repository:
           | static
         )\\b'
         name: 'keyword.variable.access.purebasic'
-      },
+      }
       {
         match: '(?ix)
         \\b(
@@ -154,7 +166,7 @@ repository:
           | redim
         )\\b'
         name: 'keyword.container.purebasic'
-      },
+      }
       {
         match: '(?ix)
         \\b(
@@ -174,7 +186,7 @@ repository:
           | enableexplicit
         )\\b'
         name: 'keyword.compilerdirective.purebasic'
-      },
+      }
       {
         match: '(?ix)
         \\b(
@@ -185,7 +197,7 @@ repository:
           | proceduredll
         )\\b'
         name: 'keyword.procedure.purebasic'
-      },
+      }
       {
         match: '(?ix)
         \\b(
@@ -194,7 +206,7 @@ repository:
           | xincludefile
         )\\b'
         name: 'keyword.include.purebasic'
-      },
+      }
       {
         match: '(?ix)
         \\b(
@@ -204,7 +216,7 @@ repository:
           | xor
         )\\b'
         name: 'keyword.operator.logical.purebasic'
-      },
+      }
       {
         match: '(?ix)
         \\b(
@@ -225,6 +237,7 @@ repository:
           | goto
           | if
           | next
+          | procedurereturn
           | repeat
           | return
           | select
@@ -237,7 +250,7 @@ repository:
           | with
         )\\b'
         name: 'keyword.control.purebasic'
-      },
+      }
       {
         match: '(?ix)
         \\b(
@@ -287,32 +300,29 @@ repository:
         name: 'keyword.purebasic'
       }
     ]
-  }
-  
-  string: {
+
+  string:
     patterns: [
       {
         begin: '"'
         beginCaptures:
           0:
-            name: 'punctuation.definition.string.double.purebasic'
+            name: 'string.purebasic'
         end: '"'
         endCaptures:
           0:
-            name: 'punctuation.definition.string.double.purebasic'
-        name: 'string.quoted.double.purebasic'
-      },
+            name: 'string.purebasic'
+        name: 'string.purebasic'
+      }
       {
         begin: '\''
         beginCaptures:
           0:
-            name: 'punctuation.definition.string.single.purebasic'
+            name: 'constant.character.purebasic'
         end: '\''
         endCaptures:
           0:
-            name: 'punctuation.definition.string.single.purebasic'
-        name: 'string.quoted.single.purebasic'
+            name: 'constant.character.purebasic'
+        name: 'constant.character.purebasic'
       }
     ]
-  }
-  
