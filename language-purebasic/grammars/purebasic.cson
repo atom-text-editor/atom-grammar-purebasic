@@ -30,9 +30,9 @@ patterns: [
     match: '([A-Za-z_][A-Za-z0-9_]+)\\s*(::)'
     captures:
       1:
-        'name': 'entity.name.module.purebasic'
+        name: 'entity.name.module.purebasic'
       2:
-        'name': 'keyword.operator.module-scope.purebasic'
+        name: 'keyword.operator.module-scope.purebasic'
     patterns: [
       { include: '$base' }
     ]
@@ -185,7 +185,7 @@ repository:
           | enableasm
           | enableexplicit
         )\\b'
-        name: 'keyword.compilerdirective.purebasic'
+        name: 'keyword.compiler-directive.purebasic'
       }
       {
         match: '(?ix)
